@@ -1,0 +1,249 @@
+<!DOCTYPE HTML>
+<html lang = "en">
+<head>
+  <title>New Train Tracker - Design</title>
+  <meta charset = "UTF-8" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <style>
+	html, body {
+		margin: 0;
+		padding: 0;
+		font-family: 'Proxima Nova';
+	}
+	h1 {
+		text-transform: uppercase;
+		font-size: 30px;
+		font-weight: 800;
+		display: inline-block;
+		vertical-align: middle;
+	}
+	.h1r {
+		font-weight: 600;
+	}
+	h2 {
+		font-family: 'Helvetica';
+		font-size: 30px;
+		text-transform: uppercase;
+		color: white;
+		margin: 10px auto;
+	}
+	#content p {
+		font-family: 'Helvetica';
+		font-size: 20px;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: #FFEBD4;
+		margin: 42px 0;
+		height: 24px;
+	}
+	.stationLabels p:first-child {
+		margin-top: 12px !important;
+	}
+	#footer p {
+		font-weight: 600;
+		font-size: 20px;
+		display: inline-block;
+		margin: 0;
+		vertical-align: middle;
+		color: #2E2D2C;
+	}
+	#footer p.numTrains {
+		font-weight: 800;
+	}
+	#footer p.copyright {
+		font-family: 'Helvetica';
+		font-weight: 800;
+	}
+	.marginRight {
+		margin-right: 20px;
+	}
+	#header {
+		background-color: white;
+		position: fixed;
+		top: 0;
+		padding: 0;
+		width: 100%;
+		height: 100px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		z-index: 100;
+		box-sizing: border-box;
+		border-left: solid 20px white;
+		border-right: solid 20px white;
+	}
+	#headerLogo {
+		width: 50px;
+		height: 50px;
+		background-image: url(./assets/TM_logo.svg);
+		display: inline-block;
+		vertical-align: middle;
+	}
+	#hamburger {
+		font-size: 30px;
+		color: #2E2D2C;
+	}
+	#banner {
+		position: fixed;
+		padding: 0;
+		width: 100%;
+		background-color: #ED8B00;
+		height: 60px;
+		top: 100px;
+		text-align: center;
+		z-index: 40;
+		-webkit-box-shadow: 0px 0px 30px 0px rgba(0,0,0,0.75);
+		-moz-box-shadow: 0px 0px 30px 0px rgba(0,0,0,0.75);
+		box-shadow: 0px 0px 30px 0px rgba(0,0,0,0.75);
+	}
+	#footer {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+		background-color: white;
+		color: #2E2D2C;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		z-index: 50;
+		box-sizing: border-box;
+		border-left: solid 20px white;
+		border-right: solid 20px white;
+		height: 40px;
+	}
+	.wordmark {
+		width: 138px;
+		height: 20px;
+		background-image: url(./assets/TM_wordmark.svg);
+		display: inline-block;
+		vertical-align: middle;
+		background-repeat: no-repeat;
+	}
+	#content {
+		width: 100%;
+		min-height: 100vh;
+		/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#bf6f00+1,eb8a00+25 */
+		background: #eb8a00; /* Old browsers */
+		background: -moz-linear-gradient(top, #bf6f00 1%, #eb8a00 25%); /* FF3.6-15 */
+		background: -webkit-linear-gradient(top, #bf6f00 1%,#eb8a00 25%); /* Chrome10-25,Safari5.1-6 */
+		background: linear-gradient(to bottom, #bf6f00 1%,#eb8a00 25%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		padding-top: 200px;
+	}
+	
+	.trainIcon {
+		width: 30px;
+	}
+	.vis-container {
+		margin: 0 auto;
+	}
+	.stationLabels {
+		display: inline-block;
+		width: 36%;
+		margin-left: 150px;
+		vertical-align: top;
+	}
+	.line {
+		width: 0;
+		border-left: 8px solid #7F481E;
+		margin-left: 25%;
+		display: inline-block;
+		vertical-align: top;
+	}
+	.station {
+		height: 30px;
+		width: 30px;
+		margin: 20px 0 20px -27px;
+		border-radius: 50%;
+		border: 8px solid #7F481E;
+		background-color: #eb8a00;
+	}
+	.station:first-child  {
+		margin-top: 0;
+	}
+	.pulsating-circle {
+		height: 30px;
+		width: 30px;
+		margin: 0 0 0 -19px;
+	}
+	.pulsating-circle:before {
+		content: '';
+		display: block;
+		width: 300%;
+		height: 300%;
+		box-sizing: border-box;
+		margin-left: -100%;
+		/* margin-top: -100%; */
+		border-radius: 50%;
+		background-color: white;
+		-webkit-animation: pulse-ring 1.5s infinite;
+		animation: pulse-ring 1.5s infinite;
+	}
+	.pulsating-circle:after {
+		content: '';
+		display: block;
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
+		/* margin-left: -100%; */
+		margin-top: -200%;
+		border-radius: 50%;
+		background-color: white;
+	}
+	@keyframes pulse-ring {
+		0% {
+			opacity: 1;
+			transform: scale(0.2);
+		}
+		100% {
+			opacity: 0;
+			transform: scale(1);
+		}
+	}
+	
+  </style>
+</head>
+
+<div id="header">
+	<div>
+		<div id="headerLogo" class="marginRight"></div>
+		<h1>New Train <span class="h1r">Tracker</span></h1>
+	</div>
+	<div id="hamburger">
+		<i class="fas fa-bars"></i>
+	</div>
+</div>
+<div id="banner">
+	<h2>Orange Line</h2>
+</div>
+<div id="footer">
+	<div>
+		<p class="numTrains">2</p>
+		<p>new trains in service</p>
+	</div>
+	<div>
+		<p class="copyright">&copy;</p>
+		<div class="wordmark"></div>
+	</div>
+</div>
+<div id="content">
+	<div class="vis-container">
+		<p>Content here</p>
+		<img class="trainIcon" src="assets/train.svg">
+		<div class="line">
+			<div class="station"></div>
+			<div class="station"></div>
+			<div class="station"></div>
+			<div class="station"></div>
+			<div class="pulsating-circle"></div>
+		</div>
+		<div class="stationLabels">
+			<p>State</p>
+			<p>Downtown Crossing</p>
+			<p>Chinatown</p>
+			<p>Tufts Medical Center</p>
+		</div>
+	</div>
+</div>
+  
+<script></script>
+  
