@@ -7,7 +7,7 @@
     "postinstall": "cd server && pipenv install",
     "build-elm": "cd elm && elm make src/Main.elm --output ../js/elm.js",
     "watch-elm": "chokidar elm/src/ -c 'npm run build-elm'",
-    "start-python": "cd server && pipenv run python3 server.py",
+    "start-python": "cd server && pipenv run python server.py",
     "start": "concurrently npm:start-python npm:watch-elm",
     "format": "cd elm && elm-format . --yes",
     "test": "echo \"Error: no test specified\" && exit 1"
