@@ -1,0 +1,389 @@
+<!DOCTYPE HTML>
+<html lang = "en">
+<head>
+  <title>New Train Tracker - Design</title>
+  <meta charset = "UTF-8" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <style>
+	html, body {
+		margin: 0;
+		padding: 0;
+		font-family: 'Proxima Nova';
+	}
+	h1 {
+		text-transform: uppercase;
+		font-size: 30px;
+		font-weight: 800;
+		display: inline-block;
+		vertical-align: middle;
+	}
+	.h1r {
+		font-weight: 600;
+	}
+	h2 {
+		font-family: 'Helvetica';
+		font-size: 30px;
+		text-transform: uppercase;
+		color: white;
+		margin: 10px auto;
+	}
+
+	#footer p {
+		font-weight: 600;
+		font-size: 20px;
+		display: inline-block;
+		margin: 0;
+		vertical-align: middle;
+		color: #2E2D2C;
+	}
+	#footer p.numTrains {
+		font-weight: 800;
+	}
+	#footer p.copyright {
+		font-family: 'Helvetica';
+		font-weight: 800;
+	}
+	.marginRight {
+		margin-right: 20px;
+	}
+	#header {
+		background-color: white;
+		position: fixed;
+		top: 0;
+		padding: 0;
+		width: 100%;
+		height: 100px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		z-index: 100;
+		box-sizing: border-box;
+		border-left: solid 20px white;
+		border-right: solid 20px white;
+	}
+	#headerLogo {
+		width: 50px;
+		height: 50px;
+		background-image: url(./assets/TM_logo.svg);
+		display: inline-block;
+		vertical-align: middle;
+	}
+	#hamburger {
+		font-size: 30px;
+		color: #2E2D2C;
+	}
+	#banner {
+		position: fixed;
+		padding: 0;
+		width: 100%;
+		background-color: #ED8B00;
+		height: 60px;
+		top: 100px;
+		text-align: center;
+		z-index: 40;
+		-webkit-box-shadow: 0px 0px 30px 0px rgba(0,0,0,0.75);
+		-moz-box-shadow: 0px 0px 30px 0px rgba(0,0,0,0.75);
+		box-shadow: 0px 0px 30px 0px rgba(0,0,0,0.75);
+	}
+	#footer {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+		background-color: white;
+		color: #2E2D2C;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		z-index: 50;
+		box-sizing: border-box;
+		border-left: solid 20px white;
+		border-right: solid 20px white;
+		height: 40px;
+	}
+	.wordmark {
+		width: 138px;
+		height: 20px;
+		background-image: url(./assets/TM_wordmark.svg);
+		display: inline-block;
+		vertical-align: middle;
+		background-repeat: no-repeat;
+	}
+	#content {
+		width: 100%;
+		min-height: 100vh;
+		/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#bf6f00+1,eb8a00+25 */
+		background: #eb8a00; /* Old browsers */
+		background: -moz-linear-gradient(top, #bf6f00 1%, #eb8a00 25%); /* FF3.6-15 */
+		background: -webkit-linear-gradient(top, #bf6f00 1%,#eb8a00 25%); /* Chrome10-25,Safari5.1-6 */
+		background: linear-gradient(to bottom, #bf6f00 1%,#eb8a00 25%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	}
+	
+	.vis-container {
+		margin: 0 20px;
+		padding-top: 200px;
+		padding-bottom: 80px;
+	}
+	.row {
+		display: flex;
+		height: 50px;
+	}
+	.south, .north { 
+		width: 60px;
+	}
+	.station {
+		width: 34px;
+		border-radius: 50%;
+		border: 8px solid #7F481E;
+		background-color: #eb8a00;
+		position: relative;
+	}
+	.line { 
+		width: 21px;
+		border-left: 8px solid #7F481E;
+		margin: -5px 0 -5px 21px;
+		position: relative;
+	}
+	.label { 
+		width: auto;
+		flex: 1;
+	}
+	.label p {
+		font-family: 'Helvetica';
+		font-size: 20px;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: #FFEBD4;
+		margin: 14px;
+	}
+	.station .train {
+		position: absolute;
+		top: -28px;
+		left: 2px;
+	}
+	.line .train {
+		position: absolute;
+		top: -15px;
+		left: -19px;
+	}
+	.trainIcon {
+		width: 30px;
+		height: 30px;
+		margin: 10px auto;
+		background-image: url(./assets/train.svg);
+		background-repeat: no-repeat;
+		position: relative;
+		/*
+		-webkit-box-shadow: 0px 0px 30px 0px rgba(0,0,0,0.75);
+		-moz-box-shadow: 0px 0px 30px 0px rgba(0,0,0,0.75);
+		box-shadow: 0px 0px 30px 0px rgba(0,0,0,0.75);
+		*/
+	}
+	.south .trainIcon:before {
+		content: '';
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		margin-left: -11px;
+		margin-top: 4px;
+		width: 0;
+		height: 0;
+		border-top: solid 12px white;
+		border-left: solid 10px transparent;
+		border-right: solid 10px transparent;
+	}
+	.north .trainIcon:before {
+		content: '';
+		position: absolute;
+		bottom: 100%;
+		left: 50%;
+		margin-left: -11px;
+		margin-bottom: 4px;
+		width: 0;
+		height: 0;
+		border-bottom: solid 12px white;
+		border-left: solid 10px transparent;
+		border-right: solid 10px transparent;
+	}
+	.south .trainIcon p, .north .trainIcon p {
+		position: absolute;
+		text-align: center;
+		width: 100%;
+		size: 20px;
+		color: white;
+	}
+	.south .trainIcon p {
+		top: -36px;
+	}
+	.north .trainIcon p {
+		bottom: -36px;
+	}
+	
+	.pulsating-circle {
+		height: 30px;
+		width: 30px;
+	}
+	.pulsating-circle:before {
+		content: '';
+		display: block;
+		width: 300%;
+		height: 300%;
+		box-sizing: border-box;
+		margin-left: -100%;
+		/* margin-top: -100%; */
+		border-radius: 50%;
+		background-color: white;
+		-webkit-animation: pulse-ring 1.5s infinite;
+		animation: pulse-ring 1.5s infinite;
+	}
+	.pulsating-circle:after {
+		content: '';
+		display: block;
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
+		/* margin-left: -100%; */
+		margin-top: -200%;
+		border-radius: 50%;
+		background-color: white;
+	}
+	@keyframes pulse-ring {
+		0% {
+			opacity: 1;
+			transform: scale(0.2);
+		}
+		100% {
+			opacity: 0;
+			transform: scale(1);
+		}
+	}
+	
+	
+	/* MEDIA QUERIES */
+	@media only screen and (min-width: 768px) {
+		.vis-container {
+			margin: 0 100px;
+		}
+		.label {
+			margin-left: 50px;
+		}
+	}
+	
+  </style>
+</head>
+
+<div id="header">
+	<div>
+		<div id="headerLogo" class="marginRight"></div>
+		<h1>New Train <span class="h1r">Tracker</span></h1>
+	</div>
+	<div id="hamburger">
+		<i class="fas fa-bars"></i>
+	</div>
+</div>
+<div id="banner">
+	<h2>Orange Line</h2>
+</div>
+<div id="footer">
+	<div>
+		<p class="numTrains">2</p>
+		<p>new trains in service</p>
+	</div>
+	<div>
+		<p class="copyright">&copy;</p>
+		<div class="wordmark"></div>
+	</div>
+</div>
+<div id="content">
+
+	<div class="vis-container">
+		<div class="row">
+			<div class="south"></div>
+			<div class="station"></div>
+			<div class="north"></div>
+			<div class="label">
+				<p>State</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="south"></div>
+			<div class="line">
+				<div id="train03" class="train">
+					<div class="pulsating-circle"></div>
+				</div>
+			</div>
+			<div class="north">
+				<div class="trainIcon">
+					<p>5390</p>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="south">
+				<div class="trainIcon">
+					<p>1241</p>
+				</div>
+			</div>
+			<div class="station">
+				<div id="train01" class="train">
+					<div class="pulsating-circle"></div>
+				</div>
+			</div>
+			<div class="north"></div>
+			<div class="label">
+				<p>Downtown Crossing</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="south"></div>
+			<div class="line"></div>
+			<div class="north"></div>
+		</div>
+		<div class="row">
+			<div class="south"></div>
+			<div class="station">
+				<div id="train02" class="train">
+					<div class="pulsating-circle"></div>
+				</div>
+			</div>
+			<div class="north">
+				<div class="trainIcon">
+					<p>6737</p>
+				</div>
+			</div>
+			<div class="label">
+				<p>Chinatown</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="south"></div>
+			<div class="line"></div>
+			<div class="north"></div>
+		</div>
+		<div class="row">
+			<div class="south"></div>
+			<div class="station"></div>
+			<div class="north"></div>
+			<div class="label">
+				<p>Tufts Medical Center</p>
+			</div>
+		</div>
+		
+	</div>
+</div>
+  
+<script src="./jquery-3.3.1.min.js"></script>
+<script>
+/*
+var pulsatingCircle = $("<div/>").addClass("pulsating-circle");
+
+// EXAMPLE 1: southbound train 1000 at Downtown Crossing
+var station = 1,
+	train01 = $("<div/>").attr("id", "train01").addClass("train").offset({top: 66 * station});
+	trainIcon = $("<div/>").addClass("trainIcon south");
+$(".line").append(train01);
+$(train01).append(pulsatingCircle).append(trainIcon);
+
+// EXAMPLE 2: southbound train at 
+*/
+</script>
+  
