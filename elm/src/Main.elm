@@ -1,10 +1,13 @@
 module Main exposing (main)
 
 import Browser
+import Data exposing (..)
 import Html exposing (Html)
 import Http
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline as Pipeline
+import Ladder
+import RemoteData exposing (WebData)
 import Time
 
 
@@ -13,27 +16,15 @@ type alias Flags =
 
 
 type alias Model =
-    { vehicles : List Vehicle
+    { vehicles : WebData (List Vehicle)
+    , stops : WebData (List Stop)
     }
 
 
 type Msg
-    = ReceiveVehicles (Result Http.Error (List Vehicle))
+    = ReceiveVehicles (WebData (List Vehicle))
     | Poll Time.Posix
-
-
-type alias Vehicle =
-    { label : String
-    , route : String
-    , currentStatus : CurrentStatus
-    , stationId : String
-    , newFlag : Bool
-    }
-
-
-type CurrentStatus
-    = InTransitTo
-    | StoppedAt
+    | ReceiveStops (WebData (List Stop))
 
 
 main : Program Flags Model Msg
@@ -48,9 +39,13 @@ main =
 
 init : flags -> ( Model, Cmd Msg )
 init _ =
-    ( { vehicles = []
+    ( { vehicles = RemoteData.Loading
+      , stops = RemoteData.Loading
       }
-    , getNewVehicles
+    , Cmd.batch
+        [ getNewVehicles
+        , getStops
+        ]
     )
 
 
@@ -63,7 +58,21 @@ getNewVehicles : Cmd Msg
 getNewVehicles =
     Http.get
         { url = "/data/Orange"
-        , expect = Http.expectJson ReceiveVehicles (Decode.list vehicleDecoder)
+        , expect =
+            Http.expectJson
+                (ReceiveVehicles << RemoteData.fromResult)
+                (Decode.list vehicleDecoder)
+        }
+
+
+getStops : Cmd Msg
+getStops =
+    Http.get
+        { url = "/stops/Orange"
+        , expect =
+            Http.expectJson
+                (ReceiveStops << RemoteData.fromResult)
+                (Decode.list stopDecoder)
         }
 
 
@@ -72,6 +81,21 @@ vehicleDecoder =
     Decode.succeed Vehicle
         |> Pipeline.required "label" Decode.string
         |> Pipeline.required "route" Decode.string
+        |> Pipeline.required "direction"
+            (Decode.int
+                |> Decode.andThen
+                    (\i ->
+                        case i of
+                            0 ->
+                                Decode.succeed Downward
+
+                            1 ->
+                                Decode.succeed Upward
+
+                            _ ->
+                                Decode.fail ("Unexpected direction " ++ String.fromInt i)
+                    )
+            )
         |> Pipeline.required "current_status"
             (Decode.string
                 |> Decode.andThen
@@ -94,24 +118,29 @@ vehicleDecoder =
         |> Pipeline.required "new_flag" Decode.bool
 
 
+stopDecoder : Decoder Stop
+stopDecoder =
+    Decode.succeed Stop
+        |> Pipeline.required "id" Decode.string
+        |> Pipeline.required "name" Decode.string
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ReceiveVehicles result ->
-            case result of
-                Ok vehicles ->
-                    ( { model | vehicles = vehicles }
-                    , Cmd.none
-                    )
+            ( { model
+                | vehicles = result
+              }
+            , Cmd.none
+            )
 
-                Err e ->
-                    let
-                        _ =
-                            Debug.log "" e
-                    in
-                    ( model
-                    , Cmd.none
-                    )
+        ReceiveStops result ->
+            ( { model
+                | stops = result
+              }
+            , Cmd.none
+            )
 
         Poll _ ->
             ( model
@@ -121,15 +150,69 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
+    case ( model.stops, model.vehicles ) of
+        ( RemoteData.Success stops, RemoteData.Success vehicles ) ->
+            viewLadder stops vehicles
+
+        ( RemoteData.Loading, _ ) ->
+            Html.text "Loading"
+
+        ( _, RemoteData.Loading ) ->
+            Html.text "Loading"
+
+        ( error_stops, error_vehicles ) ->
+            Html.div []
+                [ Html.text "Error"
+                , Html.text "Stops:"
+                , Html.text (Debug.toString error_stops)
+                , Html.text "Vehicles:"
+                , Html.text (Debug.toString error_vehicles)
+                ]
+
+
+viewLadder : List Stop -> List Vehicle -> Html Msg
+viewLadder stops vehicles =
+    let
+        ladder =
+            Ladder.ladder stops vehicles
+    in
     Html.div []
-        [ Html.text "Vehicles:"
-        , Html.ul []
-            (List.map renderVehicle model.vehicles)
-        ]
+        (List.map viewLadderRow ladder)
 
 
-renderVehicle : Vehicle -> Html Msg
-renderVehicle vehicle =
-    Html.li []
-        [ Html.text (Debug.toString vehicle)
+viewLadderRow : Ladder.LadderRow -> Html msg
+viewLadderRow row =
+    Html.div []
+        [ Html.text
+            (case row.leftTrains of
+                _ :: _ ->
+                    "X"
+
+                [] ->
+                    "."
+            )
+        , Html.text
+            (case row.stopName of
+                Nothing ->
+                    "|"
+
+                Just _ ->
+                    "O"
+            )
+        , Html.text
+            (case row.rightTrains of
+                _ :: _ ->
+                    "X"
+
+                [] ->
+                    "."
+            )
+        , Html.text
+            (case row.stopName of
+                Nothing ->
+                    "."
+
+                Just name ->
+                    name
+            )
         ]
