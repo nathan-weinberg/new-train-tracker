@@ -7,8 +7,10 @@
     "postinstall": "cd server && pipenv install",
     "build-elm": "cd elm && elm make src/Main.elm --output ../js/elm.js",
     "build-elm-debug": "cd elm && elm make src/Main.elm --output ../js/elm.js --debug",
-    "watch-elm": "npm run build-elm-debug; chokidar elm/src/ -c 'npm run build-elm-debug'",
-    "start-python": "cd server && pipenv run python3 server.py",
+    "watch-elm": "npm run build-elm-debug && chokidar elm/src/ -c \"npm run build-elm-debug\"",
+    "start-python": "run-script-os",
+    "start-python:nix": "cd server && pipenv run python3 server.py",
+    "start-python:win32": "cd server && pipenv run python server.py",
     "start": "concurrently npm:start-python npm:watch-elm",
     "format": "cd elm/ && elm-format . --yes",
     "test-elm": "cd elm && elm-format . --validate && elm-test",
@@ -31,6 +33,7 @@
   "devDependencies": {
     "chokidar-cli": "^2.0.0",
     "concurrently": "^4.1.0",
-    "elm-test": "^0.19.0-rev6"
+    "elm-test": "^0.19.0-rev6",
+    "run-script-os": "^1.0.7"
   }
 }
