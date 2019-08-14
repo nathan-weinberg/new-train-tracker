@@ -1,7 +1,3 @@
-import sys
-import os
-sys.path.append("/opt/python/current/app/server")
-
 import flask
 import MbtaApi
 import json
