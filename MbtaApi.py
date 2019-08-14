@@ -20,16 +20,17 @@ def vehicle_data_for_routes(routes):
         'filter[route]': ','.join(routes),
         'include': 'stop'
     })
-    make_old_trains_new = True
-    return list(map(lambda vehicle: {
+
+    # Filtering by new trains for now, so only ones with new_flag are sent to browser
+    return list(filter(lambda x: x['new_flag'], map(lambda vehicle: {
         'label': vehicle['label'],
         'route': vehicle['route']['id'],
         'direction': vehicle['direction_id'],
         'current_status': vehicle['current_status'],
         'station_id': vehicle['stop']['parent_station']['id'],
         'new_flag': Fleet.car_array_is_new(vehicle['route']['id'],
-                    vehicle['label'].split('-'),make_old_trains_new)
-    }, vehicles))
+                    vehicle['label'].split('-'))
+    }, vehicles)))
 
 def stops_for_route(route):
     stops = getV3('stops', {
