@@ -168,12 +168,16 @@ header : Html msg
 header =
     Html.header
         [ Html.class "header" ]
-        [ Html.img
-            [ Html.class "header-logo"
-            , Html.src "/assets/TM_logo.svg"
-            , Html.alt "Transit Matters"
+        [ Html.a
+            [ Html.href "https://transitmatters.org/join"
             ]
-            []
+            [ Html.img
+                [ Html.class "header-logo"
+                , Html.src "/assets/TM_logo.svg"
+                , Html.alt "Transit Matters"
+                ]
+                []
+            ]
         , Html.h1 [] [ Html.text "New Train Tracker" ]
         ]
 
@@ -307,12 +311,16 @@ footer remoteVehicles =
     Html.div
         [ Html.class "footer" ]
         [ Html.text numNewTrainsText
-        , Html.img
-            [ Html.class "footer-wordmark"
-            , Html.src "/assets/TM_wordmark.svg"
-            , Html.alt "Transit Matters"
+        , Html.a
+            [ Html.href "https://transitmatters.org/join"
             ]
-            []
+            [ Html.img
+                [ Html.class "footer-wordmark"
+                , Html.src "/assets/TM_wordmark.svg"
+                , Html.alt "Transit Matters"
+                ]
+                []
+            ]
         ]
 
 
